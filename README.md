@@ -24,25 +24,43 @@ treat it as a careful description of the method, not as the code that made
 the results.
 
 **It is also provably not the published network, and here is the proof.**
-`build_model(10, 6)` has 686,657 trainable parameters. The paper reports about
-1.5M. The difference is entirely in the three widths the Methods never state,
-and the paper's own figure constrains them: sweeping filter counts, kernel
-size and FFN width, every setting within 5% of 1.5M has 256 filters in the
-second conv block rather than the 128 assumed here. I have left the
-assumptions where they are instead of tuning them until the count matches,
-because fitting them to the headline number would manufacture agreement
-rather than measure it.
+`build_model(10, 6)` has 686,273 trainable parameters, 686,657 total once
+BatchNorm's running statistics are counted (verified by building the model,
+not by hand). The paper reports about 1.5M. The difference is entirely in
+the three widths the Methods never state, and the paper's own figure
+constrains them: in a sweep over filters {32,64,128,256}, kernels {3,5,7}
+and FFN widths {128,256,512,1024}, every setting within 5% of 1.5M has 256
+filters in the second conv block rather than the 128 assumed here. I have
+left the assumptions where they are instead of tuning them until the count
+matches, because fitting them to the headline number would manufacture
+agreement rather than measure it.
 
-### What the paper reports and this repository does not implement
+### The paper's evaluation apparatus, reimplemented as new code
 
-The code covers the proposed model and its training protocol. It does not
-reproduce the paper's evaluation apparatus: there is no five-fold
-cross-validation loop, no CNN-only / CNN-LSTM / CNN-Transformer baselines
-retrained inside the pipeline, no McNemar test, neither the
-architecture-level nor the preprocessing-level ablation, no latency
-measurement, and no parameter-count report. Those are four of the paper's
-own stated contributions, and reconstructing the backbone does not
-reconstruct them.
+The paper's results rest on more than the backbone: five-fold stratified
+cross-validation, five baselines retrained inside the same pipeline,
+McNemar tests, an architecture-level and a preprocessing-level ablation,
+latency measurement and parameter counts. None of that code survived
+either. `experiments/` now reimplements all of it from the Methods:
+
+- `experiments/run_crossval.py`, five-fold CV with the whole pipeline
+  refitted inside each fold
+- `experiments/baselines.py`, Random Forest / LSTM / CNN-LSTM / Transformer
+  / CNN-Transformer plus McNemar against the full model
+- `experiments/ablations.py`, both ablation arms
+- `experiments/benchmark.py`, parameter counts and single-sample latency
+
+Two rules about these scripts. First, anything they produce is a **new**
+result from the reconstruction, never a published number; every JSON they
+write into `experiments/results/` says so in its first field. Second, they
+have been run here only in `--smoke` mode (synthetic data, to prove the
+code executes) and for `benchmark.py`, which needs no dataset; the MSU
+benchmark is not on this machine, so no experiment has been run on real
+data. For the record, the reconstruction's measured numbers so far:
+686,273 trainable parameters and a 59 ms median single-sample predict time
+on an ordinary laptop CPU. The baselines' widths are also unstated in the
+paper, so the baseline scripts carry the same assumption scale as
+`model.py`.
 
 Where the Methods give a value, the code uses it. Where they are silent, the
 code says ASSUMPTION on the exact line, and the full list is here:
@@ -99,5 +117,11 @@ from them.
 - `model.py` covers step 8
 - `train.py` covers steps 9 and 10, plus the metrics
   (accuracy, precision, recall, F1, MCC, ROC-AUC, PR-AUC, FNR, FAR)
+- `experiments/` reimplements the paper's evaluation apparatus as new code
+  (see above); `experiments/results/` holds its outputs, each labelled as a
+  new result
 
-The MSU benchmark is public and is not committed here.
+The MSU benchmark is public (the paper's data statement points to
+kaggle.com/datasets/bachirbarika/power-system) and is not committed here.
+To run the experiments for real, download it into `data/msu/` and pass that
+path to each script.

@@ -1,0 +1,75 @@
+{
+  "note": "New result from the October 2026 reconstruction. Not a published number and not produced by the original experiment code, which did not survive.",
+  "written": "2026-10-30 23:22",
+  "architecture": {
+    "cnn_only": {
+      "threshold": 0.46999999999999986,
+      "accuracy": 0.5444444444444444,
+      "precision": 0.5125,
+      "recall": 0.9534883720930233,
+      "f1": 0.6666666666666666,
+      "mcc": 0.1966128318314242,
+      "roc_auc": 0.7120237506185056,
+      "pr_auc": 0.7094176006358592,
+      "fnr": 0.046511627906976744,
+      "far": 0.8297872340425532,
+      "params": {
+        "trainable": 92353,
+        "non_trainable": 384,
+        "total": 92737
+      }
+    },
+    "cnn_bigru": {
+      "threshold": 0.4299999999999998,
+      "accuracy": 0.5333333333333333,
+      "precision": 0.5063291139240507,
+      "recall": 0.9302325581395349,
+      "f1": 0.6557377049180327,
+      "mcc": 0.1531803272246864,
+      "roc_auc": 0.7238990598713508,
+      "pr_auc": 0.7139656493865973,
+      "fnr": 0.06976744186046512,
+      "far": 0.8297872340425532,
+      "params": {
+        "trainable": 356033,
+        "non_trainable": 384,
+        "total": 356417
+      }
+    },
+    "cnn_transformer": {
+      "threshold": 0.16999999999999998,
+      "accuracy": 0.6,
+      "precision": 0.5454545454545454,
+      "recall": 0.9767441860465116,
+      "f1": 0.7,
+      "mcc": 0.3297407695929426,
+      "roc_auc": 0.7308263236021773,
+      "pr_auc": 0.7219537538763725,
+      "fnr": 0.023255813953488372,
+      "far": 0.7446808510638298,
+      "params": {
+        "trainable": 422593,
+        "non_trainable": 384,
+        "total": 422977
+      }
+    },
+    "full": {
+      "threshold": 0.17999999999999997,
+      "accuracy": 0.6555555555555556,
+      "precision": 0.5857142857142857,
+      "recall": 0.9534883720930233,
+      "f1": 0.7256637168141593,
+      "mcc": 0.4042608996128874,
+      "roc_auc": 0.7619990103908956,
+      "pr_auc": 0.7283438106018072,
+      "fnr": 0.046511627906976744,
+      "far": 0.6170212765957447,
+      "params": {
+        "trainable": 686273,
+        "non_trainable": 384,
+        "total": 686657
+      }
+    }
+  },
+  "paper_reports": "Tables 5 and 6 (not this run)"
+}

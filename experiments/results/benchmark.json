@@ -1,0 +1,26 @@
+{
+  "note": "New result from the October 2026 reconstruction. Not a published number and not produced by the original experiment code, which did not survive.",
+  "written": "2026-10-30 23:22",
+  "cnn_only": {
+    "trainable": 92353,
+    "non_trainable": 384,
+    "total": 92737
+  },
+  "cnn_bigru": {
+    "trainable": 356033,
+    "non_trainable": 384,
+    "total": 356417
+  },
+  "cnn_transformer": {
+    "trainable": 422593,
+    "non_trainable": 384,
+    "total": 422977
+  },
+  "full": {
+    "trainable": 686273,
+    "non_trainable": 384,
+    "total": 686657,
+    "median_latency_ms_batch1": 59.404699990409426
+  },
+  "paper_reports": "~1.5M params, <100 ms latency (Table 8). The full reconstruction here is 686,273 trainable + 384 non-trainable = 686,657 total, so it is not the published network."
+}
