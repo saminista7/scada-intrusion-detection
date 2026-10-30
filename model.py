@@ -19,6 +19,16 @@ BIGRU_UNITS = 128    # paper: per direction
 HEAD_UNITS = 256     # paper
 HEAD_L2 = 1e-4       # paper
 
+# ASSUMPTIONS. These four are not in the paper, and they are what the
+# parameter count is almost entirely made of. As set here the model has
+# 686,657 trainable parameters, which is 46% of the ~1.5M the paper reports --
+# so this is demonstrably NOT the published network. Sweeping the three width
+# assumptions, every setting that lands within 5% of 1.5M has 256 filters in
+# the second conv block (e.g. (128, 256) kernel 7 FFN 512 -> 1,454,721;
+# (32, 256) kernel 3 FFN 1024 -> 1,507,297). The published model was wider
+# here than this reconstruction is. Left as-is rather than tuned to hit the
+# number, because fitting the assumptions to the headline figure would
+# manufacture agreement instead of measuring it.
 CONV_FILTERS = (64, 128)  # ASSUMPTION: filter counts not stated
 KERNEL_SIZE = 3           # ASSUMPTION: kernel size not stated
 FFN_UNITS = 256           # ASSUMPTION: transformer FFN width not stated

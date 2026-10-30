@@ -7,9 +7,12 @@ Reports 2026, doi:10.1038/s41598-026-70577-4. I am the first author.
 The model is a three-stage CNN-Transformer-BiGRU for binary intrusion detection
 on the Mississippi State University (MSU) power system benchmark, with mutual
 information feature selection (top 60 of 128 features), ADASYN oversampling and
-z-score standardization fitted on the training partition only. The paper
-reports F1 0.88, MCC 0.74 and ROC-AUC 0.94 on the 14,415-sample held-out
-partition.
+z-score standardization fitted on the training partition only. On the
+14,415-sample held-out partition the paper reports 88% accuracy, macro F1
+0.86, MCC 0.74 and ROC-AUC 0.94, with a false negative rate of 9% and a false
+alarm rate of 7%. It also reports five-fold stratified cross-validation at
+F1 = 0.87 +/- 0.01, sub-100 ms inference latency on commodity hardware, and a
+compact 1.5M-parameter footprint.
 
 ## This repository is a reconstruction
 
@@ -20,17 +23,42 @@ numbers. Until someone runs it end to end on the MSU benchmark and compares,
 treat it as a careful description of the method, not as the code that made
 the results.
 
+**It is also provably not the published network, and here is the proof.**
+`build_model(10, 6)` has 686,657 trainable parameters. The paper reports about
+1.5M. The difference is entirely in the three widths the Methods never state,
+and the paper's own figure constrains them: sweeping filter counts, kernel
+size and FFN width, every setting within 5% of 1.5M has 256 filters in the
+second conv block rather than the 128 assumed here. I have left the
+assumptions where they are instead of tuning them until the count matches,
+because fitting them to the headline number would manufacture agreement
+rather than measure it.
+
+### What the paper reports and this repository does not implement
+
+The code covers the proposed model and its training protocol. It does not
+reproduce the paper's evaluation apparatus: there is no five-fold
+cross-validation loop, no CNN-only / CNN-LSTM / CNN-Transformer baselines
+retrained inside the pipeline, no McNemar test, neither the
+architecture-level nor the preprocessing-level ablation, no latency
+measurement, and no parameter-count report. Those are four of the paper's
+own stated contributions, and reconstructing the backbone does not
+reconstruct them.
+
 Where the Methods give a value, the code uses it. Where they are silent, the
 code says ASSUMPTION on the exact line, and the full list is here:
 
 | Not stated in the paper | What I chose for the reconstruction |
 |---|---|
 | Conv1D filter counts and kernel sizes (Stage 1 is "two 1D Conv blocks" with Swish and BatchNorm) | 64 then 128 filters, kernel 3 |
-| Sequence length T for reshaping the 60 selected features | T = 10, so X has shape 10 x 6 |
 | Transformer model dimension and FFN width (the paper gives 8 heads and d_k = 64 only) | d_model 128 from the CNN output, FFN 256 |
 | Dropout inside the blocks | 0.2 |
 | The validation slice used for early stopping and threshold tuning | last 10% of the training partition, stratified |
-| Which label maps to 1 in {Attack, Natural} | Attack = 1 |
+| Which label maps to 1 in {Attack, Natural} | Attack = 1, consistent with the paper's 2.5:1 ratio and its "minority-class (Natural)" wording |
+| Pre-norm or post-norm in the encoder block | pre-norm |
+
+Sequence length is **not** in this table: equation (6) states T = 10 and
+justifies it by SCADA polling intervals, so the 10 x 6 reshape is the paper's
+own choice and not mine.
 
 ## What does survive: two early notebooks
 

@@ -21,8 +21,8 @@ SEED = 42
 N_SELECTED = 60          # paper: top k = min(60, 128) by mutual information
 TEST_FRACTION = 0.2      # paper: |D_test| = 0.2 |D|  (14,415 samples)
 VAL_FRACTION = 0.1       # ASSUMPTION: validation slice size is not stated
-T_STEPS = 10             # ASSUMPTION: sequence length T is not stated;
-                         # 60 features -> sequences of shape (10, 6)
+T_STEPS = 10             # paper: equation (6) states T = 10, justified by SCADA
+                         # polling intervals; 60 features -> shape (10, 6)
 POSITIVE_LABEL = "Attack"  # ASSUMPTION: encoding direction is not stated
 
 
